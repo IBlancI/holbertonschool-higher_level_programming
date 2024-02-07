@@ -1,6 +1,22 @@
 #!/usr/bin/python3
+"""
+Define a square class
+"""
+
+
 class Square:
+    """
+    define attribute of square
+    """
     def __init__(self, size=0):
+        """
+        initialize a square
+        Args:
+            size (int, optional): size of the square. Defaults to 0.
+        Raises:
+                TypeError: size must be an integer
+                ValueError: size must be >=0
+        """
         self.size = size
 
     @property
@@ -17,4 +33,8 @@ class Square:
             self.__size = value
 
     def area(self):
+        """
+        Returns:
+            int: return square of size
+        """
         return self.__size ** 2
