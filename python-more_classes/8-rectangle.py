@@ -1,0 +1,105 @@
+#!/usr/bin/python3
+
+
+"""
+Definition of the Rectangle class with a print_symbol attribute and a static method
+"""
+class Rectangle:
+    """
+    Class variables to keep track of the number of instances created and the default print symbol
+    """
+    number_of_instances = 0
+    print_symbol = "#"
+
+    """
+    Constructor to initialize the width and height of the rectangle
+    """
+    def __init__(self, width=0, height=0):
+        self.width = width
+        self.height = height
+        # Increment the number of instances whenever a new object is created
+        Rectangle.number_of_instances += 1
+
+    """
+    Getter method for retrieving the width
+    """
+    @property
+    def width(self):
+        return self.__width
+
+    """
+    Setter method for setting the width with type and value checks
+    """
+    @width.setter
+    def width(self, value):
+        if not isinstance(value, int):
+            raise TypeError("width must be an integer")
+        elif value < 0:
+            raise ValueError("width must be >= 0")
+        self.__width = value
+
+    """
+    Getter method for retrieving the height
+    """
+    @property
+    def height(self):
+        return self.__height
+
+    """
+    Setter method for setting the height with type and value checks
+    """
+    @height.setter
+    def height(self, value):
+        if not isinstance(value, int):
+            raise TypeError("height must be an integer")
+        elif value < 0:
+            raise ValueError("height must be >= 0")
+        self.__height = value
+
+    """
+    Method to calculate the area of the rectangle
+    """
+    def area(self):
+        return self.__width * self.__height
+
+    """
+    Method to calculate the perimeter of the rectangle
+    """
+    def perimeter(self):
+        if self.__width == 0 or self.__height == 0:
+            return 0
+        return 2 * (self.__width + self.__height)
+
+    """
+    Method to represent the rectangle as a string of print_symbol characters
+    """
+    def __str__(self):
+        if self.__width == 0 or self.__height == 0:
+            return ""
+        return '\n'.join([str(self.print_symbol) * self.__width for _ in range(self.__height)])
+
+    """
+    Method to represent the rectangle as a string for reproduction
+    """
+    def __repr__(self):
+        return "Rectangle({}, {})".format(self.__width, self.__height)
+
+    """
+    Destructor method to print a farewell message when an instance is deleted
+    """
+    def __del__(self):
+        print("Bye rectangle...")
+        Rectangle.number_of_instances -= 1
+
+    """
+    Static method to compare two rectangles and return the one with the bigger or equal area
+    """
+    @staticmethod
+    def bigger_or_equal(rect_1, rect_2):
+        if not isinstance(rect_1, Rectangle):
+            raise TypeError("rect_1 must be an instance of Rectangle")
+        if not isinstance(rect_2, Rectangle):
+            raise TypeError("rect_2 must be an instance of Rectangle")
+        if rect_1.area() >= rect_2.area():
+            return rect_1
+        return rect_2
