@@ -1,0 +1,24 @@
+0 - Import:
+    >>> text_indentation = __import__('5-text_indentation').text_indentation
+
+Test 1 : Basecase
+    >>> text_indentation("text")
+    text
+
+Test 2 : type(arg) is not int
+    >>> text_indentation(1)
+    Traceback (most recent call last):
+    TypeError: text must be a string
+
+Test 3 : string with blank line
+    >>> text_indentation("text. text? text:")
+    text.
+    <BLANKLINE>
+    text?
+    <BLANKLINE>
+    text:
+
+Test 4 : Args != 1
+    >>> text_indentation()
+    Traceback (most recent call last):
+    TypeError: text_indentation() missing 1 required positional argument: 'text'
