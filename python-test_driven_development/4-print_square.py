@@ -1,17 +1,20 @@
 #!/usr/bin/python3
-"""define print square"""
+"""Print a square"""
 
 
 def print_square(size):
-    """print square"""
-    if type(size) is not int:
-        raise TypeError("size must be an integer")
+    """Initialize to print a square
+       size (int): size of square
 
-    if type(size) is float and size < 0:
-        raise TypeError("size must be an integer")
+        Raises:
+                TypeError: size is not integer
+                ValueError: size must be positive
+        """
 
+    if not isinstance(size, int):
+        raise TypeError("size must be an integer")
     if size < 0:
         raise ValueError("size must be >= 0")
 
-    for i in range(size):
+    for height in range(size):
         print("#" * size)

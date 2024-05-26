@@ -1,36 +1,40 @@
 #!/usr/bin/python3
-"""function that divides all elements of a matrix"""
+"""Define a function to divide in a matrix"""
 
 
 def matrix_divided(matrix, div):
-    """Divides the elements of a matrix and returns a new matrix."""
-    if not isinstance(matrix, list):
-        raise TypeError("Input must be a matrix (list of lists) of integers/floats")
+    """Divide element in a matrix
 
-    for row in matrix:
-        if not isinstance(row, list):
-            raise TypeError("Input must be a matrix (list of lists) of integers/floats")
-        for element in row:
-            if not isinstance(element, (int, float)):
-                raise TypeError("Input must be a matrix (list of lists) of integers/floats")
+    Args:
+    matrix (list): list of int/float
+        div (int/float): number to divide by
+    Raises:
+        TypeError: matrix contain not int/float
+        TypeError: Different row size in matrix
+        TypeError: div is not int/float
 
+    Returns:
+        list: new matrix,with divided items
+    """
+    matrix_reloaded = []
+    row_length = 0
+    list_error = "matrix must be a matrix (list of lists) of integers/floats"
+
+    if not (isinstance(matrix, list) or isinstance(matrix[0], list)
+            or len(matrix[0]) <= 0):
+        raise TypeError(list_error)
     if not isinstance(div, (int, float)):
-        raise TypeError("The divisor must be a number")
-    elif div == 0:
-        raise ZeroDivisionError("Division by zero is not allowed")
-
-    new_matrix = []
-    size = len(matrix[0])
+        raise TypeError("div must be a number")
 
     for row in matrix:
-        if len(row) != size:
-            raise TypeError("Each row of the matrix must have the same size")
-
         new_row = []
-        for element in row:
-            new_element = round(element / div, 2)
-            new_row.append(new_element)
-
-        new_matrix.append(new_row)
-
-    return new_matrix
+        if row_length == 0:
+            row_length = len(row)
+        elif not (len(row) == row_length):
+            raise TypeError("Each row of the matrix must have the same size")
+        for num in row:
+            if not isinstance(num, (int, float)):
+                raise TypeError(list_error)
+            new_row.append(round(num / div, 2))
+        matrix_reloaded.append(new_row)
+    return matrix_reloaded
