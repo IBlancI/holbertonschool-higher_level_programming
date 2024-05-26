@@ -4,9 +4,10 @@
 
 def print_square(size):
     """Initialize to print a square
-       size (int): size of square
 
-        Raises:
+        Arg:
+                size (int): size of square
+        Raise:
                 TypeError: size is not integer
                 ValueError: size must be positive
         """
