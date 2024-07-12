@@ -23,17 +23,17 @@ jwt = JWTManager(app)
 
 # Define a dictionary to store user information with hashed passwords
 users = {
-    "eduardo": {
+    "Adil": {
         "username": "Adil",
         "password": generate_password_hash("password"),
         "role": "admin"
     },
-    "lucas": {
+    "Adil93grrrr": {
         "username": "Adil93grrrr",
         "password": generate_password_hash("password"),
         "role": "user"
     },
-    "thomas": {
+    "EZWin": {
         "username": "EZWin",
         "password": generate_password_hash("password"),
         "role": "user"
