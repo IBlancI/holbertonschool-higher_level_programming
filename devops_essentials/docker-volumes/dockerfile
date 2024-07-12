@@ -1,0 +1,3 @@
+FROM alpine:latest
+VOLUME /data
+CMD echo 'Hello, Docker Volumes!' > /data/hello.txt
