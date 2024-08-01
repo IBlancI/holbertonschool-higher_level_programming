@@ -1,116 +1,91 @@
 #!/usr/bin/python3
-from flask import Flask
-from flask import jsonify
-from flask import request
+from flask import Flask, jsonify, request
 from flask_httpauth import HTTPBasicAuth
-from flask_jwt_extended import JWTManager
-from flask_jwt_extended import create_access_token
-from flask_jwt_extended import jwt_required
-from flask_jwt_extended import get_jwt_identity
-from werkzeug.security import generate_password_hash
-from werkzeug.security import check_password_hash
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required, get_jwt_identity
+from werkzeug.security import generate_password_hash, check_password_hash
 
-# Create an instance of the Flask class
 app = Flask(__name__)
 
-# Set configuration for the Flask app
-app.config['SECRET_KEY'] = 'your_secret_key'
-app.config['JWT_SECRET_KEY'] = 'your_jwt_secret_key'
-
-# Create instances for HTTP Basic Auth and JWT Auth
-auth = HTTPBasicAuth()
+# Configuration du secret pour JWT
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'  # Changez ceci en un secret plus fort
 jwt = JWTManager(app)
+auth = HTTPBasicAuth()
 
-# Define a dictionary to store user information with hashed passwords
+# Utilisateurs en mémoire
 users = {
-    "Adil": {
-        "username": "Adil",
+    "user1": {
+        "username": "user1",
         "password": generate_password_hash("password"),
+        "role": "user"
+    },
+    "admin1": {
+        "username": "admin1",
+        "password": generate_password_hash("adminpassword"),
         "role": "admin"
-    },
-    "Adil93grrrr": {
-        "username": "Adil93grrrr",
-        "password": generate_password_hash("password"),
-        "role": "user"
-    },
-    "EZWin": {
-        "username": "EZWin",
-        "password": generate_password_hash("password"),
-        "role": "user"
     }
 }
 
-# Define a function to verify the user's password
+# Authentification basique
 @auth.verify_password
 def verify_password(username, password):
-    user = users.get(username)
-    if user and check_password_hash(user['password'], password):
-        return user
+    if username in users and check_password_hash(users[username]["password"], password):
+        return username
 
-# Define a route protected with basic authentication
-@app.route('/basic-protected')
+# Route protégée par authentification basique
+@app.route('/basic-protected', methods=['GET'])
 @auth.login_required
 def basic_protected():
     return "Basic Auth: Access Granted"
 
-# Define a route for user login to generate a JWT token
-@app.route('/login', methods=["POST"])
+# Route pour se connecter et obtenir un token JWT
+@app.route('/login', methods=['POST'])
 def login():
-    data = request.get_json()
-    username = data.get("username")
-    password = data.get("password")
-    user = users.get(username)
-    if user and check_password_hash(user['password'], password):
-        access_token = create_access_token(identity={
-            "username": username,
-            "role": user['role']
-        })
-        return jsonify({"access_token": access_token})
+    data = request.json
+    username = data.get('username')
+    password = data.get('password')
+
+    if username in users and check_password_hash(users[username]["password"], password):
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+    
     return jsonify({"error": "Invalid credentials"}), 401
 
-# Define a route protected with JWT authentication
-@app.route('/jwt-protected')
+# Route protégée par JWT
+@app.route('/jwt-protected', methods=['GET'])
 @jwt_required()
 def jwt_protected():
     return "JWT Auth: Access Granted"
 
-# Define a route that only allows admin access
-@app.route('/admin-only')
+# Route protégée par rôle
+@app.route('/admin-only', methods=['GET'])
 @jwt_required()
 def admin_only():
-    user = get_jwt_identity()
-    if user['role'] != "admin":
-        return jsonify({
-            "error": "Permission denied"
-        }), 403
-    return "Admin Access: Granted"
+    current_user = get_jwt_identity()
+    if users[current_user]["role"] == "admin":
+        return "Admin Access: Granted"
+    return jsonify({"error": "Admin access required"}), 403
 
-# Handle errors for missing or invalid JWT tokens
+# Gestion des erreurs JWT
 @jwt.unauthorized_loader
 def handle_unauthorized_error(err):
     return jsonify({"error": "Missing or invalid token"}), 401
 
-# Handle errors for invalid JWT tokens
 @jwt.invalid_token_loader
 def handle_invalid_token_error(err):
     return jsonify({"error": "Invalid token"}), 401
 
-# Handle errors for expired JWT tokens
 @jwt.expired_token_loader
 def handle_expired_token_error(err):
     return jsonify({"error": "Token has expired"}), 401
 
-# Handle errors for revoked JWT tokens
 @jwt.revoked_token_loader
 def handle_revoked_token_error(err):
     return jsonify({"error": "Token has been revoked"}), 401
 
-# Handle errors for tokens that need to be fresh
 @jwt.needs_fresh_token_loader
 def handle_needs_fresh_token_error(err):
     return jsonify({"error": "Fresh token required"}), 401
 
-# Check if this script is being run directly
+# Exécutez l'application Flask
 if __name__ == "__main__":
-    # Run the Flask application
-    app.run()
+    app.run(debug=True)
