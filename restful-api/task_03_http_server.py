@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 
@@ -9,6 +8,7 @@ class SimpleAPI(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
+            # Encodez la chaîne en bytes
             self.wfile.write(b'Hello, this is a simple API!')
 
         elif self.path == '/data':
@@ -21,6 +21,7 @@ class SimpleAPI(BaseHTTPRequestHandler):
                 "age": 30,
                 "city": "New York"
             }
+            # Encodez le JSON en bytes
             self.wfile.write(json.dumps(data).encode('utf-8'))
 
         elif self.path == '/status':
